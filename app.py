@@ -452,3 +452,22 @@ with tab3:
         yaxis=dict(categoryorder='total ascending'), xaxis_title='', yaxis_title=''
     )
     st.plotly_chart(fig_starters, use_container_width=True)
+
+    st.markdown("---")
+    
+    st.markdown("### 😀 Emoji Analysis")
+    def extract_emojis(text): return [c for c in text if c in emoji.EMOJI_DATA]
+    all_emojis = [e for msg in df['Message'] for e in extract_emojis(msg)]
+    if all_emojis:
+        emoji_counts = Counter(all_emojis).most_common(10)
+        emoji_df = pd.DataFrame(emoji_counts, columns=['Emoji', 'Count'])
+        fig_emoji = px.bar(emoji_df, x='Count', y='Emoji', orientation='h',
+                           color='Count', color_continuous_scale='Viridis')
+        fig_emoji.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#1a1d24'), showlegend=False, coloraxis_showscale=False,
+            yaxis=dict(categoryorder='total ascending'), xaxis_title='', yaxis_title=''
+        )
+        st.plotly_chart(fig_emoji, use_container_width=True)
+    else:
+        st.info("No emojis found in the chat.")
